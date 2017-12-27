@@ -1,0 +1,11 @@
+services:
+    auth.provider.siteauthprovider:
+        class: wordsvilleforum\crosssiteauth\auth\provider\siteauthprovider
+        arguments:
+            - '@dbal.conn'
+        tags:
+            - { name: auth.provider }
+    wordsvilleforum.crosssiteauth.changeloginandregisterlinkslistener:
+        class: wordsvilleforum\crosssiteauth\event\change_login_and_register_links_listener
+        tags:
+            - { name: event.listener }

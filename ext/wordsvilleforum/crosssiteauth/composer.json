@@ -1,0 +1,27 @@
+{
+    "name": "wordsvilleforum/crosssiteauth",
+    "type": "phpbb-extension",
+    "description": "Wordsville Cross Site Authentication",
+    "version": "1.0.0",
+    "time": "2017-12-23",
+    "license": "GPL-2.0",
+	"authors": [{
+			"name": "Elijah Black",
+			"email": "eliblack3@hotmail.com"
+			"homepage": "https://github.com/neoncube2",
+			"role": "Lead Developer"
+		}],
+    "require": {
+        "php": ">=5.4.0",
+        "composer/installers": "~1.0"
+    },
+    "require-dev": {
+        "phpbb/epv": "dev-master"
+    },
+    "extra": {
+        "display-name": "Wordsville Cross Site Authentication",
+        "soft-require": {
+            "phpbb/phpbb": "~3.2"
+        }
+    }
+}
