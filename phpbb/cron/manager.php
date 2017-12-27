@@ -13,9 +13,6 @@
 
 namespace phpbb\cron;
 
-use phpbb\cron\task\wrapper;
-use phpbb\routing\helper;
-
 /**
 * Cron manager class.
 *
@@ -24,11 +21,6 @@ use phpbb\routing\helper;
 class manager
 {
 	/**
-	 * @var helper
-	 */
-	protected $routing_helper;
-
-	/**
 	* Set of \phpbb\cron\task\wrapper objects.
 	* Array holding all tasks that have been found.
 	*
@@ -36,27 +28,18 @@ class manager
 	*/
 	protected $tasks = array();
 
-	/**
-	 * @var string
-	 */
 	protected $phpbb_root_path;
-
-	/**
-	 * @var string
-	 */
 	protected $php_ext;
 
 	/**
 	* Constructor. Loads all available tasks.
 	*
 	* @param array|\Traversable $tasks Provides an iterable set of task names
-	* @param helper $routing_helper Routing helper
 	* @param string $phpbb_root_path Relative path to phpBB root
 	* @param string $php_ext PHP file extension
 	*/
-	public function __construct($tasks, helper $routing_helper, $phpbb_root_path, $php_ext)
+	public function __construct($tasks, $phpbb_root_path, $php_ext)
 	{
-		$this->routing_helper = $routing_helper;
 		$this->phpbb_root_path = $phpbb_root_path;
 		$this->php_ext = $php_ext;
 
@@ -159,6 +142,6 @@ class manager
 	*/
 	public function wrap_task(\phpbb\cron\task\task $task)
 	{
-		return new wrapper($task, $this->routing_helper, $this->phpbb_root_path, $this->php_ext);
+		return new \phpbb\cron\task\wrapper($task, $this->phpbb_root_path, $this->php_ext);
 	}
 }

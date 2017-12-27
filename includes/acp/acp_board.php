@@ -503,7 +503,7 @@ class acp_board
 			$error[] = $user->lang['FORM_INVALID'];
 		}
 		// Do not write values if there is an error
-		if (count($error))
+		if (sizeof($error))
 		{
 			$submit = false;
 		}
@@ -552,7 +552,7 @@ class acp_board
 
 				if ($config_name == 'allow_quick_reply' && isset($_POST['allow_quick_reply_enable']))
 				{
-					enable_bitfield_column_flag(FORUMS_TABLE, 'forum_flags', round(log(FORUM_FLAG_QUICK_REPLY, 2)));
+					enable_bitfield_column_flag(FORUMS_TABLE, 'forum_flags', log(FORUM_FLAG_QUICK_REPLY, 2));
 				}
 			}
 		}
@@ -690,7 +690,7 @@ class acp_board
 			'L_TITLE'			=> $user->lang[$display_vars['title']],
 			'L_TITLE_EXPLAIN'	=> $user->lang[$display_vars['title'] . '_EXPLAIN'],
 
-			'S_ERROR'			=> (count($error)) ? true : false,
+			'S_ERROR'			=> (sizeof($error)) ? true : false,
 			'ERROR_MSG'			=> implode('<br />', $error),
 
 			'U_ACTION'			=> $this->u_action)
@@ -1110,7 +1110,7 @@ class acp_board
 		$db->sql_query($sql);
 
 		// Already emptied for all...
-		if (count($values))
+		if (sizeof($values))
 		{
 			// Set for selected forums
 			$sql = 'UPDATE ' . FORUMS_TABLE . '

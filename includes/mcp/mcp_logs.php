@@ -115,7 +115,7 @@ class mcp_logs
 		{
 			if (confirm_box(true))
 			{
-				if ($deletemark && count($marked))
+				if ($deletemark && sizeof($marked))
 				{
 					$conditions = array(
 						'forum_id'	=> array('IN' => $forum_list),
@@ -221,7 +221,7 @@ class mcp_logs
 				'IP'			=> $row['ip'],
 				'DATE'			=> $user->format_date($row['time']),
 				'ACTION'		=> $row['action'],
-				'DATA'			=> (count($data)) ? implode(' | ', $data) : '',
+				'DATA'			=> (sizeof($data)) ? implode(' | ', $data) : '',
 				'ID'			=> $row['id'],
 				)
 			);

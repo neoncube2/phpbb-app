@@ -230,10 +230,10 @@ class ucp_main
 						$forums = array_keys($request->variable('f', array(0 => 0)));
 						$topics = array_keys($request->variable('t', array(0 => 0)));
 
-						if (count($forums) || count($topics))
+						if (sizeof($forums) || sizeof($topics))
 						{
 							$l_unwatch = '';
-							if (count($forums))
+							if (sizeof($forums))
 							{
 								$sql = 'DELETE FROM ' . FORUMS_WATCH_TABLE . '
 									WHERE ' . $db->sql_in_set('forum_id', $forums) . '
@@ -243,7 +243,7 @@ class ucp_main
 								$l_unwatch .= '_FORUMS';
 							}
 
-							if (count($topics))
+							if (sizeof($topics))
 							{
 								$sql = 'DELETE FROM ' . TOPICS_WATCH_TABLE . '
 									WHERE ' . $db->sql_in_set('topic_id', $topics) . '
@@ -453,7 +453,7 @@ class ucp_main
 					$topics = (isset($_POST['t'])) ? array_keys($request->variable('t', array(0 => 0))) : array();
 					$url = $this->u_action;
 
-					if (!count($topics))
+					if (!sizeof($topics))
 					{
 						trigger_error('NO_BOOKMARKS_SELECTED');
 					}
@@ -508,7 +508,7 @@ class ucp_main
 					{
 						$drafts = array_keys($request->variable('d', array(0 => 0)));
 
-						if (count($drafts))
+						if (sizeof($drafts))
 						{
 							$sql = 'DELETE FROM ' . DRAFTS_TABLE . '
 								WHERE ' . $db->sql_in_set('draft_id', $drafts) . '
@@ -594,7 +594,7 @@ class ucp_main
 				}
 				$db->sql_freeresult($result);
 
-				if (count($topic_ids))
+				if (sizeof($topic_ids))
 				{
 					$sql = 'SELECT topic_id, forum_id, topic_title
 						FROM ' . TOPICS_TABLE . '

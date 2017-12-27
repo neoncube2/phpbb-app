@@ -117,14 +117,12 @@ $lang = array_merge($lang, array(
 	'CLI_EXTENSION_ENABLE_FAILURE'		=> 'Could not enable extension %s',
 	'CLI_EXTENSION_ENABLE_SUCCESS'		=> 'Successfully enabled extension %s',
 	'CLI_EXTENSION_ENABLED'				=> 'Extension %s is already enabled',
-	'CLI_EXTENSION_NOT_EXIST'			=> 'Extension %s does not exist',
 	'CLI_EXTENSION_NAME'				=> 'Name of the extension',
 	'CLI_EXTENSION_PURGE_FAILURE'		=> 'Could not purge extension %s',
 	'CLI_EXTENSION_PURGE_SUCCESS'		=> 'Successfully purged extension %s',
 	'CLI_EXTENSION_UPDATE_FAILURE'		=> 'Could not update extension %s',
 	'CLI_EXTENSION_UPDATE_SUCCESS'		=> 'Successfully updated extension %s',
 	'CLI_EXTENSION_NOT_FOUND'			=> 'No extensions were found.',
-	'CLI_EXTENSION_NOT_ENABLEABLE'		=> 'Extension %s is not enableable.',
 	'CLI_EXTENSIONS_AVAILABLE'			=> 'Available',
 	'CLI_EXTENSIONS_DISABLED'			=> 'Disabled',
 	'CLI_EXTENSIONS_ENABLED'			=> 'Enabled',
@@ -164,18 +162,6 @@ $lang = array_merge($lang, array(
 		1	=> 'Re-cleaning complete. %d username was cleaned.',
 		2	=> 'Re-cleaning complete. %d usernames were cleaned.',
 	],
-
-	'CLI_DESCRIPTION_EXTENSION_MANAGE'					=> 'Manages an extension',
-	'CLI_DESCRIPTION_EXTENSION_MANAGE_ARGUMENT'			=> 'Extension to manage',
-	'CLI_DESCRIPTION_EXTENSION_INSTALL'					=> 'Install the specified extension(s).',
-	'CLI_DESCRIPTION_EXTENSION_INSTALL_OPTION_ENABLE'	=> 'Enable extension(s) after installation',
-	'CLI_DESCRIPTION_EXTENSION_INSTALL_ARGUMENT'		=> 'Extension(s) to install, e.g.: vendor/package',
-	'CLI_DESCRIPTION_EXTENSION_LIST_AVAILABLE'			=> 'List extensions available for installation.',
-	'CLI_DESCRIPTION_EXTENSION_REMOVE'					=> 'Remove the specified extension(s).',
-	'CLI_DESCRIPTION_EXTENSION_REMOVE_OPTION_PURGE'		=> 'Purge extension(s) when removing them',
-	'CLI_DESCRIPTION_EXTENSION_REMOVE_ARGUMENT'			=> 'Extension(s) to remove, e.g.: vendor/package',
-	'CLI_DESCRIPTION_EXTENSION_UPDATE'					=> 'Update the specified extension(s).',
-	'CLI_DESCRIPTION_EXTENSION_UPDATE_ARGUMENT'			=> 'Extension(s) to update, e.g.: vendor/package',
 ));
 
 // Additional help for commands.

@@ -25,27 +25,30 @@ if (!defined('IN_PHPBB'))
 */
 function send_avatar_to_browser($file, $browser)
 {
-	global $config, $phpbb_container;
-
-	$storage = $phpbb_container->get('storage.avatar');
+	global $config, $phpbb_root_path;
 
 	$prefix = $config['avatar_salt'] . '_';
-	$file_path = $prefix . $file;
+	$image_dir = $config['avatar_path'];
 
-	if ($storage->exists($file_path) && !headers_sent())
+	// Adjust image_dir path (no trailing slash)
+	if (substr($image_dir, -1, 1) == '/' || substr($image_dir, -1, 1) == '\\')
 	{
-		$file_info = $storage->file_info($file_path);
+		$image_dir = substr($image_dir, 0, -1) . '/';
+	}
+	$image_dir = str_replace(array('../', '..\\', './', '.\\'), '', $image_dir);
 
+	if ($image_dir && ($image_dir[0] == '/' || $image_dir[0] == '\\'))
+	{
+		$image_dir = '';
+	}
+	$file_path = $phpbb_root_path . $image_dir . '/' . $prefix . $file;
+
+	if ((@file_exists($file_path) && @is_readable($file_path)) && !headers_sent())
+	{
 		header('Cache-Control: public');
 
-		try
-		{
-			header('Content-Type: ' . $file_info->mimetype);
-		}
-		catch (\phpbb\storage\exception\exception $e)
-		{
-			// Just don't send this header
-		}
+		$image_data = @getimagesize($file_path);
+		header('Content-Type: ' . image_type_to_mime_type($image_data[2]));
 
 		if ((strpos(strtolower($browser), 'msie') !== false) && !phpbb_is_greater_ie_version($browser, 7))
 		{
@@ -66,26 +69,24 @@ function send_avatar_to_browser($file, $browser)
 			header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 31536000) . ' GMT');
 		}
 
-		try
+		$size = @filesize($file_path);
+		if ($size)
 		{
-			header('Content-Length: ' . $file_info->size);
-		}
-		catch (\phpbb\storage\exception\exception $e)
-		{
-			// Just don't send this header
+			header("Content-Length: $size");
 		}
 
-		try
+		if (@readfile($file_path) == false)
 		{
-			$fp = $storage->read_stream($file_path);
-			$output = fopen('php://output', 'w+b');
-			stream_copy_to_stream($fp, $output);
-			fclose($fp);
-			fclose($output);
-		}
-		catch (\Exception $e)
-		{
-			// Send nothing
+			$fp = @fopen($file_path, 'rb');
+
+			if ($fp !== false)
+			{
+				while (!feof($fp))
+				{
+					echo fread($fp, 8192);
+				}
+				fclose($fp);
+			}
 		}
 
 		flush();
@@ -567,7 +568,7 @@ function phpbb_parse_range_request($request_array, $filesize)
 		$range = explode('-', trim($range_string));
 
 		// "-" is invalid, "0-0" however is valid and means the very first byte.
-		if (count($range) != 2 || $range[0] === '' && $range[1] === '')
+		if (sizeof($range) != 2 || $range[0] === '' && $range[1] === '')
 		{
 			continue;
 		}

@@ -327,7 +327,7 @@ class add_config_settings extends \phpbb\install\task_base
 		}
 
 		$i = $this->install_config->get('add_config_settings_index', 0);
-		$total = count($sql_ary);
+		$total = sizeof($sql_ary);
 		$sql_ary = array_slice($sql_ary, $i);
 
 		foreach ($sql_ary as $sql)

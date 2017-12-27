@@ -537,7 +537,7 @@ class convertor
 
 				foreach ($prefixes as $prefix => $count)
 				{
-					if ($count >= count($tables))
+					if ($count >= sizeof($tables))
 					{
 						$possible_prefix = $prefix;
 						break;
@@ -730,7 +730,7 @@ class convertor
 				include_once($this->phpbb_root_path . 'install/convertors/' . $entry);
 				if (isset($convertor_data))
 				{
-					$sort[strtolower($convertor_data['forum_name'])] = count($convertors);
+					$sort[strtolower($convertor_data['forum_name'])] = sizeof($convertors);
 
 					$convertors[] = array(
 						'tag'			=>	$m[1],

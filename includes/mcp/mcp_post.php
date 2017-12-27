@@ -38,7 +38,7 @@ function mcp_post_details($id, $mode, $action)
 
 	add_form_key('mcp_post_details');
 
-	if (!count($post_info))
+	if (!sizeof($post_info))
 	{
 		trigger_error('POST_NOT_EXIST');
 	}
@@ -165,7 +165,7 @@ function mcp_post_details($id, $mode, $action)
 		}
 		$db->sql_freeresult($result);
 
-		if (count($attachments))
+		if (sizeof($attachments))
 		{
 			$user->add_lang('viewtopic');
 			$update_count = array();
@@ -409,7 +409,7 @@ function mcp_post_details($id, $mode, $action)
 			);
 		}
 
-		if (count($users_ary))
+		if (sizeof($users_ary))
 		{
 			// Get the usernames
 			$sql = 'SELECT user_id, username
@@ -495,7 +495,7 @@ function mcp_post_details($id, $mode, $action)
 
 		$user_select = '';
 
-		if (count($usernames_ary))
+		if (sizeof($usernames_ary))
 		{
 			ksort($usernames_ary);
 
@@ -656,7 +656,7 @@ function change_poster(&$post_info, $userdata)
 	// Renew post info
 	$post_info = phpbb_get_post_data(array($post_id), false, true);
 
-	if (!count($post_info))
+	if (!sizeof($post_info))
 	{
 		trigger_error('POST_NOT_EXIST');
 	}

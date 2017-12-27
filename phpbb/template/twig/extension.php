@@ -85,8 +85,6 @@ class extension extends \Twig_Extension
 	{
 		return array(
 			new \Twig_SimpleFunction('lang', array($this, 'lang')),
-			new \Twig_SimpleFunction('lang_defined', array($this, 'lang_defined')),
-			new \Twig_SimpleFunction('get_class', 'get_class'),
 		);
 	}
 
@@ -138,7 +136,7 @@ class extension extends \Twig_Extension
 	*
 	* @return mixed The sliced variable
 	*/
-	public function loop_subset(\Twig_Environment $env, $item, $start, $end = null, $preserveKeys = false)
+	function loop_subset(\Twig_Environment $env, $item, $start, $end = null, $preserveKeys = false)
 	{
 		// We do almost the same thing as Twig's slice (array_slice), except when $end is positive
 		if ($end >= 1)
@@ -148,7 +146,7 @@ class extension extends \Twig_Extension
 			//  of items to grab (length)
 
 			// Start must always be the actual starting number for this calculation (not negative)
-			$start = ($start < 0) ? count($item) + $start : $start;
+			$start = ($start < 0) ? sizeof($item) + $start : $start;
 			$end = $end - $start;
 		}
 
@@ -167,7 +165,7 @@ class extension extends \Twig_Extension
 	*
 	* @return string
 	*/
-	public function lang()
+	function lang()
 	{
 		$args = func_get_args();
 		$key = $args[0];
@@ -183,15 +181,5 @@ class extension extends \Twig_Extension
 		// need to check for it
 
 		return call_user_func_array(array($this->language, 'lang'), $args);
-	}
-
-	/**
-	 * Check if a language variable exists
-	 *
-	 * @return bool
-	 */
-	public function lang_defined($key)
-	{
-		return call_user_func_array([$this->language, 'is_set'], [$key]);
 	}
 }

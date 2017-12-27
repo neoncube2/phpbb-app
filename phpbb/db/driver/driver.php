@@ -537,9 +537,7 @@ abstract class driver implements driver_interface
 	*/
 	function sql_in_set($field, $array, $negate = false, $allow_empty_set = false)
 	{
-		$array = (array) $array;
-
-		if (!count($array))
+		if (!sizeof($array))
 		{
 			if (!$allow_empty_set)
 			{
@@ -561,7 +559,12 @@ abstract class driver implements driver_interface
 			}
 		}
 
-		if (count($array) == 1)
+		if (!is_array($array))
+		{
+			$array = array($array);
+		}
+
+		if (sizeof($array) == 1)
 		{
 			@reset($array);
 			$var = current($array);
@@ -629,7 +632,7 @@ abstract class driver implements driver_interface
 	*/
 	function sql_multi_insert($table, $sql_ary)
 	{
-		if (!count($sql_ary))
+		if (!sizeof($sql_ary))
 		{
 			return false;
 		}
@@ -735,7 +738,7 @@ abstract class driver implements driver_interface
 				// We run the following code to determine if we need to re-order the table array. ;)
 				// The reason for this is that for multi-aliased tables (two equal tables) in the FROM statement the last table need to match the first comparison.
 				// DBMS who rely on this: Oracle, PostgreSQL and MSSQL. For all other DBMS it makes absolutely no difference in which order the table is.
-				if (!empty($array['LEFT_JOIN']) && count($array['FROM']) > 1 && $used_multi_alias !== false)
+				if (!empty($array['LEFT_JOIN']) && sizeof($array['FROM']) > 1 && $used_multi_alias !== false)
 				{
 					// Take first LEFT JOIN
 					$join = current($array['LEFT_JOIN']);
@@ -845,7 +848,7 @@ abstract class driver implements driver_interface
 
 				default:
 
-					switch (count($condition))
+					switch (sizeof($condition))
 					{
 						case 3:
 
@@ -1135,7 +1138,7 @@ abstract class driver implements driver_interface
 				$html_table = func_get_arg(2);
 				$row = func_get_arg(3);
 
-				if (!$html_table && count($row))
+				if (!$html_table && sizeof($row))
 				{
 					$html_table = true;
 					$this->html_hold .= '<table cellspacing="1"><tr>';

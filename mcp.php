@@ -36,7 +36,7 @@ $template->assign_var('S_IN_MCP', true);
 $id = $request->variable('i', '');
 
 $mode = $request->variable('mode', array(''));
-$mode = count($mode) ? array_shift($mode) : $request->variable('mode', '');
+$mode = sizeof($mode) ? array_shift($mode) : $request->variable('mode', '');
 
 // Only Moderators can go beyond this point
 if (!$user->data['is_registered'])
@@ -59,7 +59,7 @@ if ($forum_action !== '' && $request->variable('sort', false, false, \phpbb\requ
 	$action = $forum_action;
 }
 
-if (count($action_ary))
+if (sizeof($action_ary))
 {
 	list($action, ) = each($action_ary);
 }
@@ -307,11 +307,6 @@ $vars = array(
 	'id',
 );
 extract($phpbb_dispatcher->trigger_event('core.modify_mcp_modules_display_option', compact($vars)));
-
-$template->assign_block_vars('navlinks', array(
-	'FORUM_NAME'	=> $user->lang('MCP'),
-	'U_VIEW_FORUM'	=> append_sid("{$phpbb_root_path}mcp.$phpEx"),
-));
 
 // Load and execute the relevant module
 $module->load_active();

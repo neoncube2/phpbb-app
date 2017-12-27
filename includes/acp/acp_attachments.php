@@ -190,7 +190,7 @@ class acp_attachments
 				validate_config_vars($display_vars['vars'], $cfg_array, $error);
 
 				// Do not write values if there is an error
-				if (count($error))
+				if (sizeof($error))
 				{
 					$submit = false;
 				}
@@ -226,7 +226,7 @@ class acp_attachments
 					// Check Settings
 					$this->test_upload($error, $this->new_config['upload_path'], false);
 
-					if (!count($error))
+					if (!sizeof($error))
 					{
 						trigger_error($user->lang['CONFIG_UPDATED'] . adm_back_link($this->u_action));
 					}
@@ -256,14 +256,14 @@ class acp_attachments
 				$supported_types = get_supported_image_types();
 
 				// Check Thumbnail Support
-				if (!$this->new_config['img_imagick'] && (!isset($supported_types['format']) || !count($supported_types['format'])))
+				if (!$this->new_config['img_imagick'] && (!isset($supported_types['format']) || !sizeof($supported_types['format'])))
 				{
 					$this->new_config['img_create_thumbnail'] = 0;
 				}
 
 				$template->assign_vars(array(
 					'U_SEARCH_IMAGICK'		=> $this->u_action . '&amp;action=imgmagick',
-					'S_THUMBNAIL_SUPPORT'	=> (!$this->new_config['img_imagick'] && (!isset($supported_types['format']) || !count($supported_types['format']))) ? false : true)
+					'S_THUMBNAIL_SUPPORT'	=> (!$this->new_config['img_imagick'] && (!isset($supported_types['format']) || !sizeof($supported_types['format']))) ? false : true)
 				);
 
 				// Secure Download Options - Same procedure as with banning
@@ -290,7 +290,7 @@ class acp_attachments
 				$template->assign_vars(array(
 					'S_SECURE_DOWNLOADS'	=> $this->new_config['secure_downloads'],
 					'S_DEFINED_IPS'			=> ($defined_ips != '') ? true : false,
-					'S_WARNING'				=> (count($error)) ? true : false,
+					'S_WARNING'				=> (sizeof($error)) ? true : false,
 
 					'WARNING_MSG'			=> implode('<br />', $error),
 					'DEFINED_IPS'			=> $defined_ips,
@@ -363,7 +363,7 @@ class acp_attachments
 						// Generate correct Change List
 						$extensions = array();
 
-						for ($i = 0, $size = count($extension_change_list); $i < $size; $i++)
+						for ($i = 0, $size = sizeof($extension_change_list); $i < $size; $i++)
 						{
 							$extensions[$extension_change_list[$i]]['group_id'] = $group_select_list[$i];
 						}
@@ -390,7 +390,7 @@ class acp_attachments
 						// Delete Extension?
 						$extension_id_list = $request->variable('extension_id_list', array(0));
 
-						if (count($extension_id_list))
+						if (sizeof($extension_id_list))
 						{
 							$sql = 'SELECT extension
 								FROM ' . EXTENSIONS_TABLE . '
@@ -420,7 +420,7 @@ class acp_attachments
 
 					if ($add_extension && $add)
 					{
-						if (!count($error))
+						if (!sizeof($error))
 						{
 							$sql = 'SELECT extension_id
 								FROM ' . EXTENSIONS_TABLE . "
@@ -433,7 +433,7 @@ class acp_attachments
 							}
 							$db->sql_freeresult($result);
 
-							if (!count($error))
+							if (!sizeof($error))
 							{
 								$sql_ary = array(
 									'group_id'	=>	$add_extension_group,
@@ -447,7 +447,7 @@ class acp_attachments
 						}
 					}
 
-					if (!count($error))
+					if (!sizeof($error))
 					{
 						$notify[] = $user->lang['EXTENSIONS_UPDATED'];
 					}
@@ -558,7 +558,7 @@ class acp_attachments
 						$db->sql_freeresult($result);
 					}
 
-					if (!count($error))
+					if (!sizeof($error))
 					{
 						// Ok, build the update/insert array
 						$upload_icon	= $request->variable('upload_icon', 'no_image');
@@ -575,7 +575,7 @@ class acp_attachments
 							$max_filesize = 0;
 						}
 
-						if (!count($allowed_forums))
+						if (!sizeof($allowed_forums))
 						{
 							$forum_select = false;
 						}
@@ -612,7 +612,7 @@ class acp_attachments
 
 					$extension_list = $request->variable('extensions', array(0));
 
-					if ($action == 'edit' && count($extension_list))
+					if ($action == 'edit' && sizeof($extension_list))
 					{
 						$sql = 'UPDATE ' . EXTENSIONS_TABLE . "
 							SET group_id = 0
@@ -620,7 +620,7 @@ class acp_attachments
 						$db->sql_query($sql);
 					}
 
-					if (count($extension_list))
+					if (sizeof($extension_list))
 					{
 						$sql = 'UPDATE ' . EXTENSIONS_TABLE . "
 							SET group_id = $group_id
@@ -630,7 +630,7 @@ class acp_attachments
 
 					$cache->destroy('_extensions');
 
-					if (!count($error))
+					if (!sizeof($error))
 					{
 						$notify[] = $user->lang['SUCCESS_EXTENSION_GROUP_' . strtoupper($action)];
 					}
@@ -806,7 +806,7 @@ class acp_attachments
 							'S_FILENAME_LIST'			=> $filename_list,
 							'S_EDIT_GROUP'				=> true,
 							'S_NO_IMAGE'				=> $no_image_select,
-							'S_FORUM_IDS'				=> (count($forum_ids)) ? true : false,
+							'S_FORUM_IDS'				=> (sizeof($forum_ids)) ? true : false,
 
 							'U_EXTENSIONS'		=> append_sid("{$phpbb_admin_path}index.$phpEx", "i=$id&amp;mode=extensions"),
 							'U_BACK'			=> $this->u_action,
@@ -922,16 +922,13 @@ class acp_attachments
 
 			case 'orphan':
 
-				/* @var $pagination \phpbb\pagination */
-				$pagination = $this->phpbb_container->get('pagination');
-
 				if ($submit)
 				{
 					$delete_files = (isset($_POST['delete'])) ? array_keys($request->variable('delete', array('' => 0))) : array();
 					$add_files = (isset($_POST['add'])) ? array_keys($request->variable('add', array('' => 0))) : array();
 					$post_ids = $request->variable('post_id', array('' => 0));
 
-					if (count($delete_files))
+					if (sizeof($delete_files))
 					{
 						$sql = 'SELECT *
 							FROM ' . ATTACHMENTS_TABLE . '
@@ -954,7 +951,7 @@ class acp_attachments
 						$db->sql_freeresult($result);
 					}
 
-					if (count($delete_files))
+					if (sizeof($delete_files))
 					{
 						$sql = 'DELETE FROM ' . ATTACHMENTS_TABLE . '
 							WHERE ' . $db->sql_in_set('attach_id', array_keys($delete_files));
@@ -974,7 +971,7 @@ class acp_attachments
 					}
 					unset($add_files);
 
-					if (count($upload_list))
+					if (sizeof($upload_list))
 					{
 						$template->assign_var('S_UPLOADING_FILES', true);
 
@@ -1067,29 +1064,13 @@ class acp_attachments
 					'S_ORPHAN'		=> true)
 				);
 
-				$attachments_per_page = (int) $config['topics_per_page'];
-
-				// Get total number or orphans older than 3 hours
-				$sql = 'SELECT COUNT(attach_id) as num_files, SUM(filesize) as total_size
-					FROM ' . ATTACHMENTS_TABLE . '
-					WHERE is_orphan = 1
-						AND filetime < ' . (time() - 3*60*60);
-				$result = $this->db->sql_query($sql);
-				$row = $this->db->sql_fetchrow($result);
-				$num_files = (int) $row['num_files'];
-				$total_size = (int) $row['total_size'];
-				$this->db->sql_freeresult($result);
-
-				$start = $request->variable('start', 0);
-				$start = $pagination->validate_start($start, $attachments_per_page, $num_files);
-
 				// Just get the files with is_orphan set and older than 3 hours
 				$sql = 'SELECT *
 					FROM ' . ATTACHMENTS_TABLE . '
 					WHERE is_orphan = 1
 						AND filetime < ' . (time() - 3*60*60) . '
 					ORDER BY filetime DESC';
-				$result = $db->sql_query_limit($sql, $attachments_per_page, $start);
+				$result = $db->sql_query($sql);
 
 				while ($row = $db->sql_fetchrow($result))
 				{
@@ -1105,20 +1086,6 @@ class acp_attachments
 				}
 				$db->sql_freeresult($result);
 
-				$pagination->generate_template_pagination(
-					$this->u_action,
-					'pagination',
-					'start',
-					$num_files,
-					$attachments_per_page,
-					$start
-				);
-
-				$template->assign_vars(array(
-					'TOTAL_FILES'		=> $num_files,
-					'TOTAL_SIZE'		=> get_formatted_filesize($total_size),
-				));
-
 			break;
 
 			case 'manage':
@@ -1127,7 +1094,7 @@ class acp_attachments
 				{
 					$delete_files = (isset($_POST['delete'])) ? array_keys($request->variable('delete', array('' => 0))) : array();
 
-					if (count($delete_files))
+					if (sizeof($delete_files))
 					{
 						// Select those attachments we want to delete...
 						$sql = 'SELECT real_filename
@@ -1143,7 +1110,7 @@ class acp_attachments
 
 						if ($num_deleted = $this->attachment_manager->delete('attach', $delete_files))
 						{
-							if (count($delete_files) != $num_deleted)
+							if (sizeof($delete_files) != $num_deleted)
 							{
 								$error[] = $user->lang['FILES_GONE'];
 							}
@@ -1264,7 +1231,7 @@ class acp_attachments
 				// Grab extensions
 				$extensions = $cache->obtain_attach_extensions(true);
 
-				for ($i = 0, $end = count($attachments_list); $i < $end; ++$i)
+				for ($i = 0, $end = sizeof($attachments_list); $i < $end; ++$i)
 				{
 					$row = $attachments_list[$i];
 
@@ -1299,7 +1266,7 @@ class acp_attachments
 			break;
 		}
 
-		if (count($error))
+		if (sizeof($error))
 		{
 			$template->assign_vars(array(
 				'S_WARNING'		=> true,
@@ -1307,7 +1274,7 @@ class acp_attachments
 			);
 		}
 
-		if (count($notify))
+		if (sizeof($notify))
 		{
 			$template->assign_vars(array(
 				'S_NOTIFY'		=> true,
@@ -1476,7 +1443,7 @@ class acp_attachments
 		$row['group_name'] = $user->lang['NOT_ASSIGNED'];
 		$group_name[] = $row;
 
-		for ($i = 0, $groups_size = count($group_name); $i < $groups_size; $i++)
+		for ($i = 0, $groups_size = sizeof($group_name); $i < $groups_size; $i++)
 		{
 			if ($default_group === false)
 			{
@@ -1709,7 +1676,7 @@ class acp_attachments
 			}
 			$db->sql_freeresult($result);
 
-			if (count($iplist))
+			if (sizeof($iplist))
 			{
 				foreach ($iplist as $ip_entry)
 				{
@@ -1719,7 +1686,7 @@ class acp_attachments
 				}
 			}
 
-			if (count($hostlist))
+			if (sizeof($hostlist))
 			{
 				foreach ($hostlist as $host_entry)
 				{
@@ -1742,7 +1709,7 @@ class acp_attachments
 		{
 			$unip_sql = $request->variable('unip', array(0));
 
-			if (count($unip_sql))
+			if (sizeof($unip_sql))
 			{
 				$l_unip_list = '';
 

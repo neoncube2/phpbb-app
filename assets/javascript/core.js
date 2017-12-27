@@ -27,7 +27,11 @@ phpbb.isTouch = (window && typeof window.ontouchstart !== 'undefined');
  */
 phpbb.loadingIndicator = function() {
 	if (!$loadingIndicator) {
-		$loadingIndicator = $('#loading_indicator');
+		$loadingIndicator = $('<div />', { 
+			id: 'loading_indicator', 
+			class: 'loading_indicator', 
+		});
+		$loadingIndicator.appendTo('#page-footer');
 	}
 
 	if (!$loadingIndicator.is(':visible')) {
@@ -175,7 +179,7 @@ phpbb.alert.close = function($alert, fadedark) {
 phpbb.confirm = function(msg, callback, fadedark) {
 	var $confirmDiv = $('#phpbb_confirm');
 	$confirmDiv.find('.alert_text').html(msg);
-	fadedark = typeof fadedark !== 'undefined' ? fadedark : true;
+	fadedark = fadedark || true;
 
 	$(document).on('keydown.phpbb.alert', function(e) {
 		if (e.keyCode === keymap.ENTER || e.keyCode === keymap.ESC) {
@@ -190,7 +194,9 @@ phpbb.confirm = function(msg, callback, fadedark) {
 	$confirmDiv.find('input[type="button"]').one('click.phpbb.confirmbox', function(e) {
 		var confirmed = this.name === 'confirm';
 
-		callback(confirmed);
+		if (confirmed) {
+			callback(true);
+		}
 		$confirmDiv.find('input[type="button"]').off('click.phpbb.confirmbox');
 		phpbb.alert.close($confirmDiv, fadedark || !confirmed);
 

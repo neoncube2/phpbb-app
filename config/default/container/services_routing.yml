@@ -12,6 +12,8 @@ services:
         class: Symfony\Component\HttpKernel\EventListener\RouterListener
         arguments:
             - '@router'
+            - null
+            - null
             - '@request_stack'
         tags:
             - { name: kernel.event_subscriber }
@@ -23,6 +25,7 @@ services:
             - '@router'
             - '@symfony_request'
             - '@request'
+            - '@filesystem'
             - '%core.root_path%'
             - '%core.php_ext%'
 

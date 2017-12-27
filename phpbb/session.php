@@ -13,8 +13,6 @@
 
 namespace phpbb;
 
-use phpbb\filesystem\helper as filesystem_helper;
-
 /**
 * Session class
 */
@@ -40,7 +38,7 @@ class session
 	 */
 	static function extract_current_page($root_path)
 	{
-		global $request, $symfony_request;
+		global $request, $symfony_request, $phpbb_filesystem;
 
 		$page_array = array();
 
@@ -87,30 +85,21 @@ class session
 		$page_name = (substr($script_name, -1, 1) == '/') ? '' : basename($script_name);
 		$page_name = urlencode(htmlspecialchars($page_name));
 
-		$symfony_request_path = filesystem_helper::clean_path($symfony_request->getPathInfo());
+		$symfony_request_path = $phpbb_filesystem->clean_path($symfony_request->getPathInfo());
 		if ($symfony_request_path !== '/')
 		{
 			$page_name .= str_replace('%2F', '/', urlencode($symfony_request_path));
 		}
 
-		if (substr($root_path, 0, 2) === './' && strpos($root_path, '..') === false)
-		{
-			$root_dirs = explode('/', str_replace('\\', '/', rtrim($root_path, '/')));
-			$page_dirs = explode('/', str_replace('\\', '/', '.'));
-		}
-		else
-		{
-			// current directory within the phpBB root (for example: adm)
-			$root_dirs = explode('/', str_replace('\\', '/', filesystem_helper::realpath($root_path)));
-			$page_dirs = explode('/', str_replace('\\', '/', filesystem_helper::realpath('./')));
-		}
-
+		// current directory within the phpBB root (for example: adm)
+		$root_dirs = explode('/', str_replace('\\', '/', $phpbb_filesystem->realpath($root_path)));
+		$page_dirs = explode('/', str_replace('\\', '/', $phpbb_filesystem->realpath('./')));
 		$intersection = array_intersect_assoc($root_dirs, $page_dirs);
 
 		$root_dirs = array_diff_assoc($root_dirs, $intersection);
 		$page_dirs = array_diff_assoc($page_dirs, $intersection);
 
-		$page_dir = str_repeat('../', count($root_dirs)) . implode('/', $page_dirs);
+		$page_dir = str_repeat('../', sizeof($root_dirs)) . implode('/', $page_dirs);
 
 		if ($page_dir && substr($page_dir, -1, 1) == '/')
 		{
@@ -129,8 +118,8 @@ class session
 
 		// The script path from the webroot to the phpBB root (for example: /phpBB3/)
 		$script_dirs = explode('/', $script_path);
-		array_splice($script_dirs, -count($page_dirs));
-		$root_script_path = implode('/', $script_dirs) . (count($root_dirs) ? '/' . implode('/', $root_dirs) : '');
+		array_splice($script_dirs, -sizeof($page_dirs));
+		$root_script_path = implode('/', $script_dirs) . (sizeof($root_dirs) ? '/' . implode('/', $root_dirs) : '');
 
 		// We are on the base level (phpBB root == webroot), lets adjust the variables a bit...
 		if (!$root_script_path)
@@ -252,7 +241,7 @@ class session
 			$ips = explode(' ', $this->forwarded_for);
 			foreach ($ips as $ip)
 			{
-				// check IPv4 first, the IPv6 is hopefully only going to be used very seldom
+				// check IPv4 first, the IPv6 is hopefully only going to be used very seldomly
 				if (!empty($ip) && !preg_match(get_preg_expression('ipv4'), $ip) && !preg_match(get_preg_expression('ipv6'), $ip))
 				{
 					// contains invalid data, don't use the forwarded for header
@@ -480,7 +469,7 @@ class session
 				}
 				else
 				{
-					// Added logging temporarily to help debug bugs...
+					// Added logging temporarly to help debug bugs...
 					if (defined('DEBUG') && $this->data['user_id'] != ANONYMOUS)
 					{
 						if ($referer_valid)
@@ -586,12 +575,12 @@ class session
 		$provider = $provider_collection->get_provider();
 		$this->data = $provider->autologin();
 
-		if ($user_id !== false && isset($this->data['user_id']) && $this->data['user_id'] != $user_id)
+		if ($user_id !== false && sizeof($this->data) && $this->data['user_id'] != $user_id)
 		{
 			$this->data = array();
 		}
 
-		if (isset($this->data['user_id']))
+		if (sizeof($this->data))
 		{
 			$this->cookie_data['k'] = '';
 			$this->cookie_data['u'] = $this->data['user_id'];
@@ -599,7 +588,7 @@ class session
 
 		// If we're presented with an autologin key we'll join against it.
 		// Else if we've been passed a user_id we'll grab data based on that
-		if (isset($this->cookie_data['k']) && $this->cookie_data['k'] && $this->cookie_data['u'] && empty($this->data))
+		if (isset($this->cookie_data['k']) && $this->cookie_data['k'] && $this->cookie_data['u'] && !sizeof($this->data))
 		{
 			$sql = 'SELECT u.*
 				FROM ' . USERS_TABLE . ' u, ' . SESSIONS_KEYS_TABLE . ' k
@@ -619,7 +608,7 @@ class session
 			$db->sql_freeresult($result);
 		}
 
-		if ($user_id !== false && empty($this->data))
+		if ($user_id !== false && !sizeof($this->data))
 		{
 			$this->cookie_data['k'] = '';
 			$this->cookie_data['u'] = $user_id;
@@ -647,7 +636,7 @@ class session
 		// User does not exist
 		// User is inactive
 		// User is bot
-		if (!is_array($this->data) || !count($this->data))
+		if (!sizeof($this->data) || !is_array($this->data))
 		{
 			$this->cookie_data['k'] = '';
 			$this->cookie_data['u'] = ($bot) ? $bot : ANONYMOUS;
@@ -1024,7 +1013,7 @@ class session
 		}
 		$db->sql_freeresult($result);
 
-		if (count($del_user_id))
+		if (sizeof($del_user_id))
 		{
 			// Delete expired sessions
 			$sql = 'DELETE FROM ' . SESSIONS_TABLE . '
@@ -1158,7 +1147,7 @@ class session
 			$where_sql[] = $_sql;
 		}
 
-		$sql .= (count($where_sql)) ? implode(' AND ', $where_sql) : '';
+		$sql .= (sizeof($where_sql)) ? implode(' AND ', $where_sql) : '';
 		$result = $db->sql_query($sql, $cache_ttl);
 
 		$ban_triggered_by = 'user';
@@ -1333,7 +1322,7 @@ class session
 	* Only IPv4 (rbldns does not support AAAA records/IPv6 lookups)
 	*
 	* @author satmd (from the php manual)
-	* @param string 		$mode	register/post - spamcop for example is omitted for posting
+	* @param string 		$mode	register/post - spamcop for example is ommitted for posting
 	* @param string|false	$ip		the IPv4 address to check
 	*
 	* @return false if ip is not blacklisted, else an array([checked server], [lookup])
@@ -1392,7 +1381,7 @@ class session
 
 	/**
 	* Check if URI is blacklisted
-	* This should be called only where absolutely necessary, for example on the submitted website field
+	* This should be called only where absolutly necessary, for example on the submitted website field
 	* This function is not in use at the moment and is only included for testing purposes, it may not work at all!
 	* This means it is untested at the moment and therefore commented out
 	*

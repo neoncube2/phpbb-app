@@ -101,10 +101,7 @@ class flock
 
 		if ($this->lock_fp)
 		{
-			if (!@flock($this->lock_fp, LOCK_EX))
-			{
-				throw new \phpbb\exception\http_exception(500, 'Failure while aqcuiring locks.');
-			}
+			@flock($this->lock_fp, LOCK_EX);
 		}
 
 		return (bool) $this->lock_fp;

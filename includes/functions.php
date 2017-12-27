@@ -52,6 +52,18 @@ function phpbb_load_extensions_autoloaders($phpbb_root_path)
 }
 
 /**
+* Casts a variable to the given type.
+*
+* @deprecated
+*/
+function set_var(&$result, $var, $type, $multibyte = false)
+{
+	// no need for dependency injection here, if you have the object, call the method yourself!
+	$type_cast_helper = new \phpbb\request\type_cast_helper();
+	$type_cast_helper->set_var($result, $var, $type, $multibyte);
+}
+
+/**
 * Generates an alphanumeric random string of given length
 *
 * @return string
@@ -590,7 +602,7 @@ function markread($mode, $forum_id = false, $topic_id = false, $post_time = 0, $
 
 	if ($mode == 'all')
 	{
-		if (empty($forum_id))
+		if ($forum_id === false || !sizeof($forum_id))
 		{
 			// Mark all forums read (index page)
 			/* @var $phpbb_notifications \phpbb\notification\manager */
@@ -715,7 +727,7 @@ function markread($mode, $forum_id = false, $topic_id = false, $post_time = 0, $
 			}
 			$db->sql_freeresult($result);
 
-			if (count($sql_update))
+			if (sizeof($sql_update))
 			{
 				$sql = 'UPDATE ' . FORUMS_TRACK_TABLE . "
 					SET mark_time = $post_time
@@ -851,7 +863,7 @@ function markread($mode, $forum_id = false, $topic_id = false, $post_time = 0, $
 
 				// We get the ten most minimum stored time offsets and its associated topic ids
 				$time_keys = array();
-				for ($i = 0; $i < 10 && count($tracking['t']); $i++)
+				for ($i = 0; $i < 10 && sizeof($tracking['t']); $i++)
 				{
 					$min_value = min($tracking['t']);
 					$m_tkey = array_search($min_value, $tracking['t']);
@@ -947,7 +959,7 @@ function get_topic_tracking($forum_id, $topic_ids, &$rowset, $forum_mark_time, $
 
 	$topic_ids = array_diff($topic_ids, array_keys($last_read));
 
-	if (count($topic_ids))
+	if (sizeof($topic_ids))
 	{
 		$mark_time = array();
 
@@ -999,7 +1011,7 @@ function get_complete_topic_tracking($forum_id, $topic_ids, $global_announce_lis
 
 		$topic_ids = array_diff($topic_ids, array_keys($last_read));
 
-		if (count($topic_ids))
+		if (sizeof($topic_ids))
 		{
 			$sql = 'SELECT forum_id, mark_time
 				FROM ' . FORUMS_TRACK_TABLE . "
@@ -1026,7 +1038,7 @@ function get_complete_topic_tracking($forum_id, $topic_ids, $global_announce_lis
 	{
 		global $tracking_topics;
 
-		if (!isset($tracking_topics) || !count($tracking_topics))
+		if (!isset($tracking_topics) || !sizeof($tracking_topics))
 		{
 			$tracking_topics = $request->variable($config['cookie_name'] . '_track', '', true, \phpbb\request\request_interface::COOKIE);
 			$tracking_topics = ($tracking_topics) ? tracking_unserialize($tracking_topics) : array();
@@ -1053,7 +1065,7 @@ function get_complete_topic_tracking($forum_id, $topic_ids, $global_announce_lis
 
 		$topic_ids = array_diff($topic_ids, array_keys($last_read));
 
-		if (count($topic_ids))
+		if (sizeof($topic_ids))
 		{
 			$mark_time = array();
 
@@ -1395,7 +1407,7 @@ function tracking_unserialize($string, $max_depth = 3)
 				switch ($string[$i])
 				{
 					case '(':
-						if (count($stack) >= $max_depth)
+						if (sizeof($stack) >= $max_depth)
 						{
 							die('Invalid data supplied');
 						}
@@ -1449,7 +1461,7 @@ function tracking_unserialize($string, $max_depth = 3)
 		}
 	}
 
-	if (count($stack) != 0 || ($mode != 0 && $mode != 3))
+	if (sizeof($stack) != 0 || ($mode != 0 && $mode != 3))
 	{
 		die('Invalid data supplied');
 	}
@@ -1632,7 +1644,7 @@ function append_sid($url, $params = false, $is_amp = true, $session_id = false, 
 */
 function generate_board_url($without_script_path = false)
 {
-	global $config, $user, $request, $symfony_request;
+	global $config, $user, $request;
 
 	$server_name = $user->host;
 
@@ -1649,8 +1661,7 @@ function generate_board_url($without_script_path = false)
 	}
 	else
 	{
-		$server_port = (int) $symfony_request->getPort();
-
+		$server_port = $request->server('SERVER_PORT', 0);
 		$forwarded_proto = $request->server('HTTP_X_FORWARDED_PROTO');
 
 		if (!empty($forwarded_proto) && $forwarded_proto === 'https')
@@ -1828,7 +1839,7 @@ function redirect($url, $return = false, $disable_cd_check = false)
 /**
 * Re-Apply session id after page reloads
 */
-function reapply_sid($url, $is_route = false)
+function reapply_sid($url)
 {
 	global $phpEx, $phpbb_root_path;
 
@@ -1850,7 +1861,7 @@ function reapply_sid($url, $is_route = false)
 		$url = preg_replace("/$phpEx(&amp;|&)+?/", "$phpEx?", $url);
 	}
 
-	return append_sid($url, false, true, false, $is_route);
+	return append_sid($url);
 }
 
 /**
@@ -2173,7 +2184,7 @@ function confirm_box($check, $title = '', $hidden = '', $html_body = 'confirm_bo
 
 	// re-add sid / transform & to &amp; for user->page (user->page is always using &)
 	$use_page = ($u_action) ? $u_action : str_replace('&', '&amp;', $user->page['page']);
-	$u_action = reapply_sid($phpbb_path_helper->get_valid_page($use_page, $config['enable_mod_rewrite']), $phpbb_path_helper->is_router_used());
+	$u_action = reapply_sid($phpbb_path_helper->get_valid_page($use_page, $config['enable_mod_rewrite']));
 	$u_action .= ((strpos($u_action, '?') === false) ? '?' : '&amp;') . 'confirm_key=' . $confirm_key;
 
 	$template->assign_vars(array(
@@ -2664,9 +2675,9 @@ function parse_cfg_file($filename, $lines = false)
 		{
 			$value = '';
 		}
-		else if (($value[0] == "'" && $value[strlen($value) - 1] == "'") || ($value[0] == '"' && $value[strlen($value) - 1] == '"'))
+		else if (($value[0] == "'" && $value[sizeof($value) - 1] == "'") || ($value[0] == '"' && $value[sizeof($value) - 1] == '"'))
 		{
-			$value = htmlspecialchars(substr($value, 1, strlen($value)-2));
+			$value = htmlspecialchars(substr($value, 1, sizeof($value)-2));
 		}
 		else
 		{
@@ -2995,7 +3006,7 @@ function phpbb_inet_pton($address)
 	if (preg_match(get_preg_expression('ipv6'), $address))
 	{
 		$parts = explode(':', $address);
-		$missing_parts = 8 - count($parts) + 1;
+		$missing_parts = 8 - sizeof($parts) + 1;
 
 		if (substr($address, 0, 2) === '::')
 		{
@@ -3012,7 +3023,7 @@ function phpbb_inet_pton($address)
 
 		if (preg_match(get_preg_expression('ipv4'), $last_part))
 		{
-			$parts[count($parts) - 1] = '';
+			$parts[sizeof($parts) - 1] = '';
 			$last_part = phpbb_inet_pton($last_part);
 			$embedded_ipv4 = true;
 			--$missing_parts;
@@ -3024,7 +3035,7 @@ function phpbb_inet_pton($address)
 			{
 				$ret .= str_pad($part, 4, '0', STR_PAD_LEFT);
 			}
-			else if ($i && $i < count($parts) - 1)
+			else if ($i && $i < sizeof($parts) - 1)
 			{
 				$ret .= str_repeat('0000', $missing_parts);
 			}
@@ -3480,7 +3491,15 @@ function phpbb_filter_root_path($errfile)
 
 	if (empty($root_path))
 	{
-		$root_path = \phpbb\filesystem\helper::realpath(dirname(__FILE__) . '/../');
+		if ($phpbb_filesystem)
+		{
+			$root_path = $phpbb_filesystem->realpath(dirname(__FILE__) . '/../');
+		}
+		else
+		{
+			$filesystem = new \phpbb\filesystem\filesystem();
+			$root_path = $filesystem->realpath(dirname(__FILE__) . '/../');
+		}
 	}
 
 	return str_replace(array($root_path, '\\'), array('[ROOT]', '/'), $errfile);
@@ -3612,7 +3631,7 @@ function obtain_users_online_string($online_users, $item_id = 0, $item = 'forum'
 	// Need caps version of $item for language-strings
 	$item_caps = strtoupper($item);
 
-	if (count($online_users['online_users']))
+	if (sizeof($online_users['online_users']))
 	{
 		$sql_ary = array(
 			'SELECT'	=> 'u.username, u.username_clean, u.user_id, u.user_type, u.user_allow_viewonline, u.user_colour',
@@ -4050,6 +4069,11 @@ function phpbb_get_avatar($row, $alt, $ignore_config = false, $lazy = false)
 	if ($driver)
 	{
 		$html = $driver->get_custom_html($user, $row, $alt);
+		if (!empty($html))
+		{
+			return $html;
+		}
+
 		$avatar_data = $driver->get_data($row);
 	}
 	else
@@ -4057,7 +4081,7 @@ function phpbb_get_avatar($row, $alt, $ignore_config = false, $lazy = false)
 		$avatar_data['src'] = '';
 	}
 
-	if (empty($html) && !empty($avatar_data['src']))
+	if (!empty($avatar_data['src']))
 	{
 		if ($lazy)
 		{
@@ -4317,9 +4341,6 @@ function page_header($page_title = '', $display_online_list = false, $item_id = 
 	$controller_helper = $phpbb_container->get('controller.helper');
 	$notification_mark_hash = generate_link_hash('mark_all_notifications_read');
 
-	$phpbb_version_parts = explode('.', PHPBB_VERSION, 3);
-	$phpbb_major = $phpbb_version_parts[0] . '.' . $phpbb_version_parts[1];
-
 	// The following assigns all _common_ variables that may be used at any point in a template.
 	$template->assign_vars(array(
 		'SITENAME'						=> $config['sitename'],
@@ -4353,8 +4374,6 @@ function page_header($page_title = '', $display_online_list = false, $item_id = 
 		'SESSION_ID'		=> $user->session_id,
 		'ROOT_PATH'			=> $web_path,
 		'BOARD_URL'			=> $board_url,
-		'PHPBB_VERSION'		=> PHPBB_VERSION,
-		'PHPBB_MAJOR'		=> $phpbb_major,
 
 		'L_LOGIN_LOGOUT'	=> $l_login_logout,
 		'L_INDEX'			=> ($config['board_index_text'] !== '') ? $config['board_index_text'] : $user->lang['FORUM_INDEX'],
@@ -4430,6 +4449,7 @@ function page_header($page_title = '', $display_online_list = false, $item_id = 
 		'T_SUPER_TEMPLATE_PATH'	=> "{$web_path}styles/" . rawurlencode($user->style['style_path']) . '/template',
 		'T_IMAGES_PATH'			=> "{$web_path}images/",
 		'T_SMILIES_PATH'		=> "{$web_path}{$config['smilies_path']}/",
+		'T_AVATAR_PATH'			=> "{$web_path}{$config['avatar_path']}/",
 		'T_AVATAR_GALLERY_PATH'	=> "{$web_path}{$config['avatar_gallery_path']}/",
 		'T_ICONS_PATH'			=> "{$web_path}{$config['icons_path']}/",
 		'T_RANKS_PATH'			=> "{$web_path}{$config['ranks_path']}/",
@@ -4447,6 +4467,7 @@ function page_header($page_title = '', $display_online_list = false, $item_id = 
 		'T_SUPER_TEMPLATE_NAME'	=> rawurlencode((isset($user->style['style_parent_tree']) && $user->style['style_parent_tree']) ? $user->style['style_parent_tree'] : $user->style['style_path']),
 		'T_IMAGES'				=> 'images',
 		'T_SMILIES'				=> $config['smilies_path'],
+		'T_AVATAR'				=> $config['avatar_path'],
 		'T_AVATAR_GALLERY'		=> $config['avatar_gallery_path'],
 		'T_ICONS'				=> $config['icons_path'],
 		'T_RANKS'				=> $config['ranks_path'],

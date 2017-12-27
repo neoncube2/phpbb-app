@@ -3,7 +3,6 @@ services:
         class: phpbb\cron\manager
         arguments:
             - '@cron.task_collection'
-            - '@routing.helper'
             - '%core.root_path%'
             - '%core.php_ext%'
 
@@ -13,18 +12,6 @@ services:
             - cron_lock
             - '@config'
             - '@dbal.conn'
-
-    cron.controller:
-        class: phpbb\cron\controller\cron
-
-    cron.event_listener:
-        class: phpbb\cron\event\cron_runner_listener
-        arguments:
-            - '@cron.lock_db'
-            - '@cron.manager'
-            - '@request'
-        tags:
-            - { name: kernel.event_subscriber }
 
 # ----- Cron tasks -----
     cron.task_collection:

@@ -87,7 +87,7 @@ class md_exporter
 			$this->validate_events_from_file($file_name, $this->crawl_file_for_events($file_name));
 		}
 
-		return count($this->events);
+		return sizeof($this->events);
 	}
 
 	/**
@@ -113,7 +113,7 @@ class md_exporter
 			}
 		}
 
-		return count($this->events);
+		return sizeof($this->events);
 	}
 
 	/**
@@ -219,7 +219,7 @@ class md_exporter
 			);
 		}
 
-		return count($this->events);
+		return sizeof($this->events);
 	}
 
 	/**

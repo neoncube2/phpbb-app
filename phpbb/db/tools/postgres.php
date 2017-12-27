@@ -141,7 +141,7 @@ class postgres extends tools
 				$primary_key_gen = isset($prepared_column['primary_key_set']) && $prepared_column['primary_key_set'];
 			}
 
-			// create sequence DDL based off of the existence of auto incrementing columns
+			// create sequence DDL based off of the existance of auto incrementing columns
 			if (!$create_sequence && isset($prepared_column['auto_increment']) && $prepared_column['auto_increment'])
 			{
 				$create_sequence = $column_name;
@@ -448,7 +448,7 @@ class postgres extends tools
 		// We don't even care about storing the results. We already know the answer if we get rows back.
 		if ($this->db->sql_fetchrow($result))
 		{
-			$statements[] =  "DROP SEQUENCE IF EXISTS {$table_name}_seq;\n";
+			$statements[] =  "DROP SEQUENCE {$table_name}_seq;\n";
 		}
 		$this->db->sql_freeresult($result);
 

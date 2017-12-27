@@ -258,7 +258,7 @@ class oauth extends \phpbb\auth\provider\base
 			$storage->set_user_id($row['user_id']);
 
 			/**
-			* Event is triggered after user is successfully logged in via OAuth.
+			* Event is triggered after user is successfuly logged in via OAuth.
 			*
 			* @event core.auth_oauth_login_after
 			* @var    array    row    User row
@@ -635,7 +635,7 @@ class oauth extends \phpbb\auth\provider\base
 
 		$oauth_user_ids = array();
 
-		if ($rows !== false && count($rows))
+		if ($rows !== false && sizeof($rows))
 		{
 			foreach ($rows as $row)
 			{

@@ -256,12 +256,12 @@ class topic extends \phpbb\notification\type\base
 	*
 	* @param array $post Post data from submit_post
 	* @param array $notify_users Notify users list
-	* 		Formatted from find_users_for_notification()
+	* 		Formated from find_users_for_notification()
 	* @return array Whatever you want to send to create_insert_array().
 	*/
 	public function pre_create_insert_array($post, $notify_users)
 	{
-		if (!count($notify_users) || !$this->inherit_read_status)
+		if (!sizeof($notify_users) || !$this->inherit_read_status)
 		{
 			return array();
 		}

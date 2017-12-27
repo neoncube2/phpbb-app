@@ -1,0 +1,5 @@
+cache/*
+config.php
+vendor/*
+install/*
+store/install_config.php

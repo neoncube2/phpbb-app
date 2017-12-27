@@ -229,12 +229,12 @@ class content_visibility
 			return $get_forums_visibility_sql_overwrite;
 		}
 
-		if (count($approve_forums))
+		if (sizeof($approve_forums))
 		{
 			// Remove moderator forums from the rest
 			$forum_ids = array_diff($forum_ids, $approve_forums);
 
-			if (!count($forum_ids))
+			if (!sizeof($forum_ids))
 			{
 				// The user can see all posts/topics in all specified forums
 				return $where_sql . $this->db->sql_in_set($table_alias . 'forum_id', $approve_forums) . ')';
@@ -304,7 +304,7 @@ class content_visibility
 			return $visibility_sql_overwrite;
 		}
 
-		if (count($exclude_forum_ids))
+		if (sizeof($exclude_forum_ids))
 		{
 			$where_sqls[] = '(' . $this->db->sql_in_set($table_alias . 'forum_id', $exclude_forum_ids, true) . '
 				AND ' . $table_alias . $mode . '_visibility = ' . ITEM_APPROVED . ')';
@@ -314,7 +314,7 @@ class content_visibility
 			$where_sqls[] = $table_alias . $mode . '_visibility = ' . ITEM_APPROVED;
 		}
 
-		if (count($approve_forums))
+		if (sizeof($approve_forums))
 		{
 			$where_sqls[] = $this->db->sql_in_set($table_alias . 'forum_id', $approve_forums);
 			return '(' . implode(' OR ', $where_sqls) . ')';
@@ -565,7 +565,7 @@ class content_visibility
 				$sql_ary[$recipient_field] = " + $count_increase";
 			}
 
-			if (count($sql_ary))
+			if (sizeof($sql_ary))
 			{
 				$forum_sql = array();
 
@@ -664,7 +664,7 @@ class content_visibility
 	* @param $time			int		Timestamp when the action is performed
 	* @param $reason		string	Reason why the visibilty was changed.
 	* @param $force_update_all	bool	Force to update all posts within the topic
-	* @return array		Changed topic data, empty array if an error occurred.
+	* @return array		Changed topic data, empty array if an error occured.
 	*/
 	public function set_topic_visibility($visibility, $topic_id, $forum_id, $user_id, $time, $reason, $force_update_all = false)
 	{

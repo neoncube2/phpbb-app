@@ -48,7 +48,7 @@ $lang = array_merge($lang, array(
 	'USER_LANG'			=> 'en-gb',
 
 	// You can define different rules for the determination of plural forms here.
-	// See https://area51.phpbb.com/docs/dev/32x/language/plurals.html for more information
+	// See http://wiki.phpbb.com/Plural_Rules for more information
 	// or ask the translation manager for help.
 	'PLURAL_RULE'		=> 1,
 
@@ -153,7 +153,6 @@ $lang = array_merge($lang, array(
 	'BYTES_SHORT'			=> 'B',
 
 	'CANCEL'				=> 'Cancel',
-	'CANNOT_RENAME_FILE'	=> 'Cannot rename %s',
 	'CHANGE'				=> 'Change',
 	'CHANGE_FONT_SIZE'		=> 'Change font size',
 	'CHANGING_PREFERENCES'	=> 'Changing board preferences',
@@ -369,7 +368,7 @@ $lang = array_merge($lang, array(
 	'LDAP_SEARCH_FAILED'				=> 'An error occurred while searching the LDAP directory.',
 	'LEGEND'							=> 'Legend',
 	'LIVE_SEARCHES_NOT_ALLOWED'			=> 'Live searches are not allowed.',
-	'LOADING'							=> 'Loading...',
+	'LOADING'							=> 'Loading',
 	'LOCATION'							=> 'Location',
 	'LOCK_POST'							=> 'Lock post',
 	'LOCK_POST_EXPLAIN'					=> 'Prevent editing',
@@ -481,7 +480,7 @@ $lang = array_merge($lang, array(
 	'NOTIFICATION_TOPIC_IN_QUEUE'		=> '<strong>Topic approval</strong> request by %1$s:',
 	'NOTIFICATION_TYPE_NOT_EXIST'		=> 'The notification type "%s" is missing from the file system.',
 	'NOTIFICATION_ADMIN_ACTIVATE_USER'	=> '<strong>Activation required</strong> for deactivated or newly registered user: “%1$s”',
-	// Used in conjunction with NOTIFICATION_BOOKMARK and NOTIFICATION_POST.
+	// Used in conjuction with NOTIFICATION_BOOKMARK and NOTIFICATION_POST.
 	'NOTIFICATION_MANY_OTHERS'			=> 'others',
 	'NOTIFICATION_X_OTHERS'				=> array(
 		2	=> '%d others',
@@ -557,7 +556,6 @@ $lang = array_merge($lang, array(
 	),
 	'OPTIONS'					=> 'Options',
 
-	'PAGE_NOT_FOUND'		=> 'The requested page could not be found.',
 	'PAGE_OF'				=> 'Page <strong>%1$d</strong> of <strong>%2$d</strong>',
 	'PAGE_TITLE_NUMBER'		=> 'Page %s',
 	'PASSWORD'				=> 'Password',
@@ -727,19 +725,6 @@ $lang = array_merge($lang, array(
 	'SUBFORUMS'					=> 'Subforums',
 	'SUBJECT'					=> 'Subject',
 	'SUBMIT'					=> 'Submit',
-
-	'STORAGE_ADAPTER_NOT_AVAILABLE'	=> 'Selected storage is not available.',
-	'STORAGE_FILE_EXISTS'			=> 'File already exists.',
-	'STORAGE_FILE_NO_EXIST'			=> 'File does not exist.',
-	'STORAGE_CANNOT_WRITE_FILE'		=> 'Can not write to file.',
-	'STORAGE_CANNOT_READ_FILE'		=> 'Can not read file.',
-	'STORAGE_CANNOT_DELETE'			=> 'Can not delete file or folder.',
-	'STORAGE_CANNOT_RENAME'			=> 'Can not rename file or folder.',
-	'STORAGE_CANNOT_COPY'			=> 'Can not copy file or folder.',
-	'STORAGE_CANNOT_COPY_RESOURCE'	=> 'Can not copy resource.',
-	'STORAGE_CANNOT_CREATE_DIR'		=> 'Can not create directory.',
-	'STORAGE_CANNOT_OPEN_FILE'		=> 'Can not open file.',
-	'STORAGE_CANNOT_CREATE_FILE'	=> 'Can not create file.',
 
 	'TB'				=> 'TB',
 	'TERMS_USE'			=> 'Terms of use',

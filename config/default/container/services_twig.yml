@@ -15,7 +15,6 @@ services:
             - []
         calls:
             - [setLexer, ['@template.twig.lexer']]
-            - [addGlobal, ['config', '@config']]
 
     template.twig.lexer:
         class: phpbb\template\twig\lexer
@@ -25,6 +24,8 @@ services:
 
     template.twig.loader:
         class: phpbb\template\twig\loader
+        arguments:
+            - '@filesystem'
 
     template.twig.extensions.collection:
         class: phpbb\di\service_collection

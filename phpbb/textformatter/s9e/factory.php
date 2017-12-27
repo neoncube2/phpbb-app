@@ -78,7 +78,7 @@ class factory implements \phpbb\textformatter\cache_interface
 		'b'     => '[B]{TEXT}[/B]',
 		'code'  => '[CODE lang={IDENTIFIER;optional}]{TEXT}[/CODE]',
 		'color' => '[COLOR={COLOR}]{TEXT}[/COLOR]',
-		'email' => '[EMAIL={EMAIL;useContent} subject={TEXT1;optional;postFilter=rawurlencode} body={TEXT2;optional;postFilter=rawurlencode}]{TEXT}[/EMAIL]',
+		'email' => '[EMAIL={EMAIL;useContent} subject={TEXT;optional;postFilter=rawurlencode} body={TEXT;optional;postFilter=rawurlencode}]{TEXT}[/EMAIL]',
 		'flash' => '[FLASH={NUMBER1},{NUMBER2} width={NUMBER1;postFilter=#flashwidth} height={NUMBER2;postFilter=#flashheight} url={URL;useContent} /]',
 		'i'     => '[I]{TEXT}[/I]',
 		'img'   => '[IMG src={IMAGEURL;useContent}]',
@@ -271,12 +271,7 @@ class factory implements \phpbb\textformatter\cache_interface
 		// Add default BBCodes
 		foreach ($this->get_default_bbcodes($configurator) as $bbcode)
 		{
-			$configurator->BBCodes->addCustom($bbcode['usage'], new UnsafeTemplate($bbcode['template']));
-		}
-		if (isset($configurator->tags['QUOTE']))
-		{
-			// Remove the nesting limit and let other services remove quotes at parsing time
-			$configurator->tags['QUOTE']->nestingLimit = PHP_INT_MAX;
+			$configurator->BBCodes->addCustom($bbcode['usage'], $bbcode['template']);
 		}
 
 		// Modify the template to disable images/flash depending on user's settings
@@ -328,9 +323,6 @@ class factory implements \phpbb\textformatter\cache_interface
 			// Only parse emoticons at the beginning of the text or if they're preceded by any
 			// one of: a new line, a space, a dot, or a right square bracket
 			$configurator->Emoticons->notAfter = '[^\\n .\\]]';
-
-			// Ignore emoticons that are immediately followed by a "word" character
-			$configurator->Emoticons->notBefore = '\\w';
 		}
 
 		// Load the censored words
@@ -390,18 +382,7 @@ class factory implements \phpbb\textformatter\cache_interface
 			unset($configurator->tags['censor:tag']);
 		}
 
-		$objects = $configurator->finalize();
-
-		/**
-		* Access the objects returned by finalize() before they are saved to cache
-		*
-		* @event core.text_formatter_s9e_configure_finalize
-		* @var array objects Array containing a "parser" object, a "renderer" object and optionally a "js" string
-		* @since 3.2.2-RC1
-		*/
-		$vars = array('objects');
-		extract($this->dispatcher->trigger_event('core.text_formatter_s9e_configure_finalize', compact($vars)));
-
+		$objects  = $configurator->finalize();
 		$parser   = $objects['parser'];
 		$renderer = $objects['renderer'];
 
@@ -537,9 +518,7 @@ class factory implements \phpbb\textformatter\cache_interface
 	protected function extract_templates($template)
 	{
 		// Capture the template fragments
-		// Allow either phpBB template or the Twig syntax
-		preg_match_all('#<!-- BEGIN (.*?) -->(.*?)<!-- END .*? -->#s', $template, $matches, PREG_SET_ORDER) ?:
-			preg_match_all('#{% for (.*?) in .*? %}(.*?){% endfor %}#s', $template, $matches, PREG_SET_ORDER);
+		preg_match_all('#<!-- BEGIN (.*?) -->(.*?)<!-- END .*? -->#s', $template, $matches, PREG_SET_ORDER);
 
 		$fragments = array();
 		foreach ($matches as $match)
